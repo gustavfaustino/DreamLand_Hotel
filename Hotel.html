@@ -1,0 +1,198 @@
+<html>
+  <!-- Desenvolva um programa que: 
+1) Receba o valor de uma diária no hotel e a quantidade de dias de hospedagem. Valide as informações
+, ou seja, impeça que o usuário informe dados inválidos, de maneira que o valor da diária não seja negativo
+ e que a quantidade de dias não seja nem negativa, nem maior que 30. 
+Em caso de informação inválida escreva na tela “Valor Inválido” e volte ao inicio do programa. 
+
+2) Em seguida, caso o usuário tenha informado um valor correto, pergunte o nome do hóspede. 
+
+3) Agora será informado o número do quarto (de 1 a 20); A informação deve ser armazenada e se outro hóspede tentar ocupar um quarto já ocupado o sistema informará “Quarto já está ocupado”. No caso de um quarto ocupado, deve ser oferecido ao usuário a escolha de outro quarto. 
+
+4)O próximo passo é perguntar se o usuário confirma a reserva. Caso não aceite, volte ao menu inicial.  -->
+  <head>
+    <script>
+      const NOME_HOTEL = "DreamLand";
+      const SENHA_HOTEL = 2678;
+      var nome_funcionario = "";
+      var quantidade_quartos = 20;
+      var quartos_ocupados = [];
+      var quartos_disponiveis = [];
+
+      var quartos = [
+        "1- livre",
+        "2- livre",
+        "3- livre",
+        "4- livre",
+        "5- livre",
+        "6- livre",
+        "7- livre",
+        "8- livre",
+        "9- livre",
+        "10- livre",
+        "11- livre",
+        "12- livre",
+        "13- livre",
+        "14- livre",
+        "15- livre",
+        "16- livre",
+        "17- livre",
+        "18- livre",
+        "19- livre",
+        "20- livre",
+      ];
+
+      // Função de acesso
+      setTimeout(function acesso() {
+        nome_funcionario = prompt("Informe seu nome");
+        var senha = parseInt(prompt("Informe sua senha"));
+
+        if (senha === SENHA_HOTEL) {
+          alert(
+            `Bem vindo ao HOTEL ${NOME_HOTEL}, ${nome_funcionario}. É um imenso prazer ter você por aqui!`
+          );
+          inicio();
+        } else {
+          alert("Senha incorreta");
+          acesso();
+        }
+      }, 1000);
+
+      //   Função inicial para escolha no menu
+      function inicio() {
+        var escolha = parseInt(
+          prompt(
+            "Selecione uma opção 1.) Reserva de Quartos 2.) Cadastro de Hóspedes 3.) Abastecimento de Carros 4.) Sair"
+          )
+        );
+
+        switch (escolha) {
+          case 1:
+            reserva_quartos();
+            break;
+          case 2:
+            cadastro_hospedes();
+            break;
+          case 3:
+            abastecer_carros();
+            break;
+          case 4:
+            sair();
+            break;
+          default:
+            erro();
+        }
+      }
+
+      //   Escolha reserva quartos
+      function reserva_quartos() {
+        alert(`HOTEL ${NOME_HOTEL} - RESERVA DE QUARTOS`);
+
+        // Lógica de verficação de valores:
+        let DiariaValida = false;
+        let DiasValidos = false;
+        var valor_diaria, quantidade_dia;
+
+        while (!DiariaValida) {
+          valor_diaria = prompt("Qual o valor padrão da diária?");
+          if (valor_diaria >= 0) {
+            DiariaValida = true; // Sai do loop
+          } else {
+            alert(`Valor inválido, ${nome_funcionario}`);
+          }
+        }
+        while (!DiasValidos) {
+          quantidade_dia = prompt("Quantas diárias serão necessárias");
+          if (quantidade_dia >= 0 && quantidade_dia <= 30) {
+            DiasValidos = true; // Sai do loop
+          } else {
+            alert(`Valor inválido, ${nome_funcionario}`);
+          }
+        }
+        // Fim da verficação
+        let ValorPagar = quantidade_dia * valor_diaria;
+
+        alert(
+          `O valor de ${quantidade_dia} dias de hospedagem é de R$${ValorPagar.toFixed(
+            2
+          )}`
+        );
+        // Lógica da hospedagem
+        let NomeHospede = prompt("Qual o nome do hóspede?");
+
+        let QuartoDisponivel = false;
+
+        while (!QuartoDisponivel) {
+          alert(`Lista de quartos e suas ocupações:\n${quartos.join("; ")}`);
+
+          var numero_quarto = parseInt(
+            prompt("Qual o quarto pra reserva? (1 - 20)?")
+          );
+          console.log(numero_quarto); //  verificação simples pessoal
+
+          if (numero_quarto >= 1 && numero_quarto <= 20) {
+            // verificação se há quartos disponíveis
+            let indiceQuarto = numero_quarto - 1;
+
+            if (quartos[indiceQuarto].includes("livre")) {
+              quartos[indiceQuarto] = `${numero_quarto}- ocupado`;
+              alert("Quarto livre.");
+              QuartoDisponivel = true;
+            } else {
+              alert("Quarto está ocupado. Escolha outro.");
+            }
+          } else {
+            alert("Quarto inválido, selecione um quarto válido!");
+          }
+        }
+
+        let Confirma = confirm(
+          `${nome_funcionario}, você confirma a hospedagem para ${NomeHospede} por ${quantidade_dia} dias
+          para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
+            2
+          )}?`
+        );
+
+        if (Confirma) {
+          alert(`${nome_funcionario}, reserva efetuada para ${NomeHospede}`);
+          alert(`Lista de quartos e suas ocupações:\n${quartos.join("; ")}`);
+        } else {
+          alert("Reserva cancelada. Voltando ao menu inicial...");
+          reserva_quartos();
+        }
+
+        inicio();
+      }
+
+      //   Escolha cadastro hospedes
+      function cadastro_hospedes() {
+        alert(`HOTEL ${NOME_HOTEL} - CADASTRO DE HÓSPEDE`);
+        inicio();
+      }
+
+      //   Escolha abastecer carros
+      function abastecer_carros() {
+        alert(`HOTEL ${NOME_HOTEL} - ABASTECER`);
+        inicio();
+      }
+
+      //   Erro
+      function erro() {
+        alert("Por favor, informe um número entre 1 e 4");
+        inicio();
+      }
+
+      function sair() {
+        if (confirm("Você deseja sair?")) {
+          alert(`Muito obrigado e até logo, ${nome_funcionario}.`);
+        } else {
+          inicio();
+        }
+      }
+
+      acesso();
+    </script>
+  </head>
+
+  <body></body>
+</html>
