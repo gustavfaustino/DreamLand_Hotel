@@ -1,5 +1,5 @@
 <html>
-    <!-- 
+  <!-- 
   ^~^  ,
  ('Y') )
  /   \/ 
@@ -11,8 +11,6 @@
       const SENHA_HOTEL = 2678;
       var nome_funcionario = "";
       var quantidade_quartos = 20;
-      var quartos_ocupados = [];
-      var quartos_disponiveis = [];
 
       var quartos = [
         "1- livre",
@@ -36,6 +34,8 @@
         "19- livre",
         "20- livre",
       ];
+
+      var hospedes = [];
 
       // Função de acesso
       setTimeout(function acesso() {
@@ -66,7 +66,7 @@
             reserva_quartos();
             break;
           case 2:
-            cadastro_hospedes();
+            opcoes_cadastro();
             break;
           case 3:
             abastecer_carros();
@@ -126,13 +126,13 @@
           console.log(numero_quarto); //  verificação simples pessoal
 
           if (numero_quarto >= 1 && numero_quarto <= 20) {
-            // verificação se há quartos disponíveis
             let indiceQuarto = numero_quarto - 1;
 
+            // verificação se há quartos disponíveis
             if (quartos[indiceQuarto].includes("livre")) {
               quartos[indiceQuarto] = `${numero_quarto}- ocupado`;
               alert("Quarto livre.");
-              QuartoDisponivel = true;
+              QuartoDisponivel = true; // se sim, sai do loop
             } else {
               alert("Quarto está ocupado. Escolha outro.");
             }
@@ -143,7 +143,7 @@
 
         let Confirma = confirm(
           `${nome_funcionario}, você confirma a hospedagem para ${NomeHospede} por ${quantidade_dia} dias
-          para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
+                      para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
             2
           )}?`
         );
@@ -159,12 +159,149 @@
         inicio();
       }
 
+      //       Aqui vamos tratar do cadastro de hóspedes, mas de uma forma diferente.
+      // Como no programa anterior, imagine que uma família acaba de chegar ao balcão do hotel e quer se hospedar.
+
+      // Monte um programa em que o usuário poderá cadastrar e pesquisar hóspedes.
+
+      // O programa deve oferecer um menu com algumas opções ao usuário: 1- cadastrar; 2- pesquisar; 3-listar; 4- sair.
+
+      // A opção “cadastrar” deve permitir que o usuário informe um nome de hóspede, gravando-o em memória (máximo de 15 cadastros; caso atinja essa quantidade, mostre “Máximo de cadastros atingido”).
+
+      // A opção “pesquisar” deve permitir que o usuário informe um nome e, caso seja encontrado um nome exatamente igual, mostre a mensagem “Hospede (nome) foi encontrado". Se o nome não foi encontrado mostre “Hóspede não encontrado”.
+
+      // A opção “listar” exibe todos os hóspedes do hotel um a um.
+
+      // O programa deve permitir que o usuário realize essas operações repetidas várias vezes, até que use a opção “4”, que retorna ao menu principal.
+
+      function opcoes_cadastro() {
+        alert(`HOTEL ${NOME_HOTEL} - CADASTRO DE HÓSPEDE OPÇÕES`);
+
+        var opcao = parseInt(
+          prompt(
+            "Selecione uma opção 1.) Cadastrar 2.) Pesquisar 3.) Listar 4.) Sair"
+          )
+        );
+
+        switch (opcao) {
+          case 1:
+            cadastro_hospedes();
+            break;
+          case 2:
+            pesquisar_hospede();
+            break;
+          case 3:
+            listar_hospedes();
+            break;
+          case 4:
+            confirm("Você deseja sair?") ? inicio() : opcoes_cadastro(); // Lambda para confirmar saída
+            // Se confirmar, volta ao início, senão, volta ao menu de opções
+            break;
+          default:
+            erro();
+        }
+      }
+
       //   Escolha cadastro hospedes
       function cadastro_hospedes() {
         alert(`HOTEL ${NOME_HOTEL} - CADASTRO DE HÓSPEDE`);
-        inicio();
+
+        var valor_diaria_padrao = parseFloat(
+          prompt("Informe o valor padrão da diária")
+        );
+
+        // Inicialização das variáveis de controle fora do loop
+        var gratuidade = 0;
+        var meia = 0;
+        var valor_total = 0;
+
+        var loop = true;
+        for (let i = 1; i <= 15 && loop; i++) {
+          var nome_hospede = prompt("Informe o nome do hóspede");
+          var idade_hospede = parseInt(prompt("Informe a idade do hóspede"));
+
+          var texto_padrao = `${nome_hospede} cadastrado(a) com sucesso!`;
+
+          var tipo_hospede = "Paga inteira"; // Tipo padrão de hospedagem
+          var valor_a_pagar = valor_diaria_padrao; // Valor padrão a ser pago
+
+          if (idade_hospede <= 6) {
+            // Observação: No exercício original, a gratuidade era para menores de 6 anos mas no exemplo
+            // quem tinha 6 anos pagava meia. Por isso, a gratuidade.
+            alert(`${texto_padrao}\n${nome_hospede} possui gratuidade`);
+            tipo_hospede = "Gratuidade";
+            gratuidade++;
+            valor_a_pagar = 0; // Gratuidade, não paga nada
+          } else if (idade_hospede >= 60) {
+            // Mesma observação do item anterior.
+            alert(`${texto_padrao}\n${nome_hospede} paga meia`);
+
+            meia++;
+            valor_a_pagar /= 2; // Meia hospedagem, paga metade
+            tipo_hospede = "Meia";
+          } else {
+            alert(texto_padrao);
+          }
+
+          hospedes.push({
+            Hospede: nome_hospede,
+            Idade: idade_hospede,
+            Tipo: tipo_hospede,
+            Valor: valor_a_pagar,
+          });
+
+          valor_total += valor_a_pagar; // Acumula o valor a pagar no total
+
+          var continuar = prompt("Deseja continuar? (S/N)").toUpperCase();
+          if (continuar === "N") {
+            loop = false;
+          }
+          if (i === 15) {
+            alert("Máximo de cadastros atingido");
+            break;
+          }
+        }
+
+        alert(
+          `${nome_funcionario}, a quantidade de gratuidades: ${gratuidade}\n
+              Quantidade de meias hospedagens: ${meia}\n
+              Valor total: R$${valor_total.toFixed(2)}`
+        );
+        opcoes_cadastro();
       }
 
+      function pesquisar_hospede() {
+        alert(`HOTEL ${NOME_HOTEL} - PESQUISAR HÓSPEDE`);
+
+        var nome_pesquisa = prompt("Informe o nome do hóspede");
+
+        var encontrado = hospedes.find(
+          (hospede) => hospede.Hospede === nome_pesquisa
+        ); // Procura o hóspede
+
+        if (encontrado) {
+          alert(`Hóspede ${nome_pesquisa} foi encontrado`);
+        } else {
+          alert(`Hóspede ${nome_pesquisa} não foi encontrado`);
+        }
+
+        opcoes_cadastro();
+      }
+
+      function listar_hospedes() {
+        alert(`HOTEL ${NOME_HOTEL} - LISTAR HÓSPEDES`);
+
+        hospedes.forEach((hospede) => {
+          alert(
+            `Nome: ${hospede.Hospede}\n
+            Idade: ${hospede.Idade}\n
+            Tipo: ${hospede.Tipo}\n
+            Valor: R$${hospede.Valor.toFixed(2)}`
+          );
+        });
+
+        opcoes_cadastro();
+      }
       //   Escolha abastecer carros
       function abastecer_carros() {
         alert(`HOTEL ${NOME_HOTEL} - ABASTECER`);
@@ -173,7 +310,7 @@
 
       //   Erro
       function erro() {
-        alert("Por favor, informe um número entre 1 e 4");
+        alert("Por favor, informe um número de escolha válido.");
         inicio();
       }
 
