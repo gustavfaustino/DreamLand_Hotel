@@ -57,7 +57,12 @@
       function inicio() {
         var escolha = parseInt(
           prompt(
-            "Selecione uma opção 1.) Reserva de Quartos 2.) Cadastro de Hóspedes 3.) Abastecimento de Carros 4.) Sair"
+            `Selecione uma opção
+                  1.) Reserva de Quartos
+                  2.) Cadastro de Hóspedes
+                  3.) Abastecimento de Carros
+                  4.) Cadastrar Eventos
+                  5.) Sair`
           )
         );
 
@@ -72,6 +77,9 @@
             abastecer_carros();
             break;
           case 4:
+            cadastra_evento();
+            break;
+          case 5:
             sair();
             break;
           default:
@@ -143,7 +151,7 @@
 
         let Confirma = confirm(
           `${nome_funcionario}, você confirma a hospedagem para ${NomeHospede} por ${quantidade_dia} dias
-                      para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
+                                        para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
             2
           )}?`
         );
@@ -158,21 +166,6 @@
 
         inicio();
       }
-
-      //       Aqui vamos tratar do cadastro de hóspedes, mas de uma forma diferente.
-      // Como no programa anterior, imagine que uma família acaba de chegar ao balcão do hotel e quer se hospedar.
-
-      // Monte um programa em que o usuário poderá cadastrar e pesquisar hóspedes.
-
-      // O programa deve oferecer um menu com algumas opções ao usuário: 1- cadastrar; 2- pesquisar; 3-listar; 4- sair.
-
-      // A opção “cadastrar” deve permitir que o usuário informe um nome de hóspede, gravando-o em memória (máximo de 15 cadastros; caso atinja essa quantidade, mostre “Máximo de cadastros atingido”).
-
-      // A opção “pesquisar” deve permitir que o usuário informe um nome e, caso seja encontrado um nome exatamente igual, mostre a mensagem “Hospede (nome) foi encontrado". Se o nome não foi encontrado mostre “Hóspede não encontrado”.
-
-      // A opção “listar” exibe todos os hóspedes do hotel um a um.
-
-      // O programa deve permitir que o usuário realize essas operações repetidas várias vezes, até que use a opção “4”, que retorna ao menu principal.
 
       function opcoes_cadastro() {
         alert(`HOTEL ${NOME_HOTEL} - CADASTRO DE HÓSPEDE OPÇÕES`);
@@ -264,8 +257,8 @@
 
         alert(
           `${nome_funcionario}, a quantidade de gratuidades: ${gratuidade}\n
-              Quantidade de meias hospedagens: ${meia}\n
-              Valor total: R$${valor_total.toFixed(2)}`
+                                Quantidade de meias hospedagens: ${meia}\n
+                                Valor total: R$${valor_total.toFixed(2)}`
         );
         opcoes_cadastro();
       }
@@ -294,14 +287,157 @@
         hospedes.forEach((hospede) => {
           alert(
             `Nome: ${hospede.Hospede}\n
-            Idade: ${hospede.Idade}\n
-            Tipo: ${hospede.Tipo}\n
-            Valor: R$${hospede.Valor.toFixed(2)}`
+                              Idade: ${hospede.Idade}\n
+                              Tipo: ${hospede.Tipo}\n
+                              Valor: R$${hospede.Valor.toFixed(2)}`
           );
         });
 
         opcoes_cadastro();
       }
+
+      // Parte 2: Quando será o evento?
+
+      // O hotel oferece reserva de seu auditório caso o contratante necessite. O auditório está disponível para reservas de segunda a sexta das 7hs às 23hs; sábados e domingos apenas das 7hs às 15hs.
+
+      // 1) Monte um programa que receba o dia da semana em texto.
+      // Importante: na entrada de dados para dia da semana, desconsidere acentos e use letra minúscula. Não é necessário validação para isso no código.
+      // 2) Também receba a hora (número inteiro, desprezando minutos e segundos)
+      // 3) Diga se o auditório está disponível ou  não de acordo com as regras especificadas acima.
+      // 4) Quando o auditório estiver disponível, receba ainda o nome da empresa e mostre na tela a mensagem “Auditório reservado para (nome da empresa): (dia da semana) às (horas)hs”.
+
+      // Exemplo 1:
+      // Programa pergunta       => "Qual o dia do seu evento?"
+      // Resposta do usuário     => sabado
+      // Programa pergunta       => "Qual a hora do seu evento?"
+      // Resposta do usuário     => 16
+      // Programa exibe              => Auditório indisponível"
+
+      // Exemplo 2:
+      // Programa pergunta     =>  "Qual o dia do evento?"
+      // Resposta do usuário   =>  segunda
+      // Programa pergunta     =>  "Qual é a hora do evento?"
+      // Resposta do usuário   =>  13
+      // Programa pergunta     =>  "Qual o nome da empresa?"
+      // Resposta do usuário   =>  Lojas Transilvânia
+      // Programa exibe           =>  "Auditório reservado para Lojas Transilvânia. Segunda às 13hs."
+
+      function cadastra_evento() {
+        // Variáveis de controle
+        var auditório_laranja = 150;
+        var auditório_laranja_cadeiras = 70;
+
+        var auditório_colorado = 350;
+        var texto_laranja = `Use o auditório Laranja`;
+        // TODO: Verificar se o número de convidados é válido
+
+        while (true) {
+          var convidados = parseInt(
+            prompt("Informe a quantidade de convidados")
+          );
+
+          if (convidados > 350) {
+            alert("Número de convidados excede a capacidade máxima");
+          } else if (convidados <= 0 || isNaN(convidados)) {
+            alert("Número de convidados inválido");
+          } else {
+            verifica_auditório(convidados);
+            break;
+          }
+        }
+
+        // Parte 1: Onde será o evento?
+        function verifica_auditório(convidados) {
+          if (convidados <= auditório_laranja + auditório_laranja_cadeiras) {
+            if (convidados > auditório_laranja) {
+              alert(
+                `${texto_laranja} (inclua mais ${
+                  convidados - auditório_laranja
+                } cadeiras)`
+              );
+            } else {
+              alert(`${texto_laranja}`);
+            }
+          } else {
+            alert("Use o auditório Colorado");
+          }
+          alert("Agora vamos agendar o evento");
+          agendar_evento();
+        }
+
+        // Parte 2: Agendamento de eventos
+        function agendar_evento() {
+          var dia_da_semana;
+          var hora_evento;
+          var nome_empresa;
+          var auditório_disponível = false;
+
+          //RegEx de validação
+          let DiasSemanaValidar = /^(segunda|terca|quarta|quinta|sexta|sabado|domingo)$/iu; // Case insensitive e Unicode, ou seja, aceita acentos e letras maiúsculas
+          // RegEx é bem poderoso.
+        
+          // Dia da semana
+          while(true){
+            dia_da_semana = prompt("Qual o dia do evento? (segunda à domingo)");
+
+            if(DiasSemanaValidar.test(dia_da_semana)){
+              break;
+            } else {
+              alert("Dia da semana inválido");
+            }
+          }
+        }
+
+        //   Hora do evento
+        while(true){
+          hora_evento = parseInt(prompt("Qual a hora do evento?"));
+
+          if(!isNaN(hora_evento) && hora_evento >= 0 && hora_evento <= 23){
+            break;
+          } else {
+            alert("Hora inválida, informe um valor entre 0 e 23");
+          }
+        }
+
+        //   Nome da empresa
+        nome_empresa = prompt("Qual o nome da empresa?");
+
+        //   Verificação de disponibilidade
+        if (
+          (dia_da_semana === "segunda" ||
+            dia_da_semana === "terca" ||
+            dia_da_semana === "quarta" ||
+            dia_da_semana === "quinta" ||
+            dia_da_semana === "sexta") &&
+          hora_evento >= 7 &&
+          hora_evento <= 23
+        ) {
+          auditório_disponível = true;
+        } else if (
+          (dia_da_semana === "sabado" || dia_da_semana === "domingo") &&
+          hora_evento >= 7 &&
+          hora_evento <= 15
+        ) {
+          auditório_disponível = true;
+        }
+
+        if (auditório_disponível) {
+          alert(
+            `Auditório reservado para ${nome_empresa}: ${dia_da_semana} às ${hora_evento}hs`
+          );
+          alert("Agora vamos ver os funcionários necessários...");
+          funcionarios_evento();
+        } else {
+          alert("Auditório indisponível");
+        }
+
+        function funcionarios_evento() {
+          
+        }
+
+        inicio();
+      }
+
       //   Escolha abastecer carros
       function abastecer_carros() {
         alert(`HOTEL ${NOME_HOTEL} - ABASTECER`);
