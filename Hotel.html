@@ -35,10 +35,13 @@
         "20- livre",
       ];
 
+      eventos = [];
+
       var hospedes = [];
 
       // Função de acesso
-      setTimeout(function acesso() {
+      function acesso() {
+        // TODO: Adicionar verificação de tentativas e verificar se o nome é válido
         nome_funcionario = prompt("Informe seu nome");
         var senha = parseInt(prompt("Informe sua senha"));
 
@@ -51,18 +54,18 @@
           alert("Senha incorreta");
           acesso();
         }
-      }, 1000);
+      }
 
       //   Função inicial para escolha no menu
       function inicio() {
         var escolha = parseInt(
           prompt(
             `Selecione uma opção
-                  1.) Reserva de Quartos
-                  2.) Cadastro de Hóspedes
-                  3.) Abastecimento de Carros
-                  4.) Cadastrar Eventos
-                  5.) Sair`
+                             1.) Reserva de Quartos
+                             2.) Cadastro de Hóspedes
+                             3.) Abastecimento de Carros
+                             4.) Cadastrar Eventos
+                             5.) Sair`
           )
         );
 
@@ -77,7 +80,7 @@
             abastecer_carros();
             break;
           case 4:
-            cadastra_evento();
+            evento();
             break;
           case 5:
             sair();
@@ -151,7 +154,7 @@
 
         let Confirma = confirm(
           `${nome_funcionario}, você confirma a hospedagem para ${NomeHospede} por ${quantidade_dia} dias
-                                        para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
+                                                   para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
             2
           )}?`
         );
@@ -257,8 +260,10 @@
 
         alert(
           `${nome_funcionario}, a quantidade de gratuidades: ${gratuidade}\n
-                                Quantidade de meias hospedagens: ${meia}\n
-                                Valor total: R$${valor_total.toFixed(2)}`
+                                           Quantidade de meias hospedagens: ${meia}\n
+                                           Valor total: R$${valor_total.toFixed(
+                                             2
+                                           )}`
         );
         opcoes_cadastro();
       }
@@ -287,129 +292,227 @@
         hospedes.forEach((hospede) => {
           alert(
             `Nome: ${hospede.Hospede}\n
-                              Idade: ${hospede.Idade}\n
-                              Tipo: ${hospede.Tipo}\n
-                              Valor: R$${hospede.Valor.toFixed(2)}`
+                                         Idade: ${hospede.Idade}\n
+                                         Tipo: ${hospede.Tipo}\n
+                                         Valor: R$${hospede.Valor.toFixed(2)}`
           );
         });
 
         opcoes_cadastro();
       }
 
-      function cadastra_evento() {
-        // Variáveis de controle
-        var auditório_laranja = 150;
-        var auditório_laranja_cadeiras = 70;
+      function evento() {
+        alert(`HOTEL ${NOME_HOTEL} - CADASTRO DE EVENTOS`);
 
-        var auditório_colorado = 350;
-        var texto_laranja = `Use o auditório Laranja`;
-        // TODO: Verificar se o número de convidados é válido
-
-        while (true) {
-          var convidados = parseInt(
-            prompt("Informe a quantidade de convidados")
-          );
-
-          if (convidados > 350) {
-            alert("Número de convidados excede a capacidade máxima");
-          } else if (convidados <= 0 || isNaN(convidados)) {
-            alert("Número de convidados inválido");
-          } else {
-            verifica_auditório(convidados);
-            break;
-          }
-        }
-
+        // Variáveis de controle globais
+        var auditorio_usado = "";
+        var nome_empresa = "";
+        var convidados = 0;
+        var dia_da_semana = "";
+        var hora_evento = "";
+        var duracao_evento = 0;
+        var garcoms = 0;
+        var custoGarcoms = 0;
+        var custoBuffet = 0;
+        var custoTotalGarcoms = 0;
+        cadastra_evento();
         // Parte 1: Onde será o evento?
-        function verifica_auditório(convidados) {
-          if (convidados <= auditório_laranja + auditório_laranja_cadeiras) {
-            if (convidados > auditório_laranja) {
-              alert(
-                `${texto_laranja} (inclua mais ${
-                  convidados - auditório_laranja
-                } cadeiras)`
-              );
-            } else {
-              alert(`${texto_laranja}`);
-            }
-          } else {
-            alert("Use o auditório Colorado");
-          }
-          alert("Agora vamos agendar o evento");
-          agendar_evento();
-        }
+        function cadastra_evento() {
+          // Variáveis de controle
+          var auditório_laranja = 150;
+          var auditório_laranja_cadeiras = 70;
 
+          var auditório_colorado = 350;
+          var texto_laranja = `Use o auditório Laranja`;
+
+          // TODO: Verificar se o número de convidados é válido
+
+          while (true) {
+            convidados = parseInt(prompt("Informe a quantidade de convidados"));
+
+            if (convidados > 350) {
+              alert("Número de convidados excede a capacidade máxima");
+            } else if (convidados <= 0 || isNaN(convidados)) {
+              alert("Número de convidados inválido");
+            } else {
+              verifica_auditório(convidados);
+              break;
+            }
+          }
+          convidados_total = convidados; // Salva a quantidade de convidados para uso posterior
+
+          // Parte 1: Onde será o evento?
+          function verifica_auditório(convidados) {
+            if (convidados <= auditório_laranja + auditório_laranja_cadeiras) {
+              if (convidados > auditório_laranja) {
+                alert(
+                  `${texto_laranja} (inclua mais ${
+                    convidados - auditório_laranja
+                  } cadeiras)`
+                );
+                auditorio_usado = "Auditório Laranja"; // Salva o auditório usado
+              } else {
+                alert(`${texto_laranja}`);
+                auditorio_usado = "Auditório Laranja"; // Salva o auditório usado
+              }
+            } else {
+              alert("Use o auditório Colorado");
+              auditorio_usado = "Auditório Colorado"; // Salva o auditório usado
+            }
+            alert("Agora vamos agendar o evento");
+            agendar_evento();
+          }
+        }
         // Parte 2: Agendamento de eventos
         function agendar_evento() {
-          var dia_da_semana;
-          var hora_evento;
-          var nome_empresa;
           var auditório_disponível = false;
 
           //RegEx de validação
-          let DiasSemanaValidar = /^(segunda|terca|quarta|quinta|sexta|sabado|domingo)$/iu; // Case insensitive e Unicode, ou seja, aceita acentos e letras maiúsculas
+          let DiasSemanaValidar =
+            /^(segunda|terca|quarta|quinta|sexta|sabado|domingo)$/iu; // Case insensitive e Unicode, ou seja, aceita acentos e letras maiúsculas
           // RegEx é bem poderoso.
-        
+
           // Dia da semana
-          while(true){
+          while (true) {
             dia_da_semana = prompt("Qual o dia do evento? (segunda à domingo)");
 
-            if(DiasSemanaValidar.test(dia_da_semana)){
+            if (DiasSemanaValidar.test(dia_da_semana)) {
               break;
             } else {
               alert("Dia da semana inválido");
             }
           }
-        }
 
-        //   Hora do evento
-        while(true){
-          hora_evento = parseInt(prompt("Qual a hora do evento?"));
+          //   Hora do evento
+          while (true) {
+            hora_evento = parseInt(prompt("Qual a hora do evento?"));
 
-          if(!isNaN(hora_evento) && hora_evento >= 0 && hora_evento <= 23){
-            break;
+            if (!isNaN(hora_evento) && hora_evento >= 0 && hora_evento <= 23) {
+              break;
+            } else {
+              alert("Hora inválida, informe um valor entre 0 e 23");
+            }
+          }
+
+          //   Nome da empresa
+          nome_empresa = prompt("Qual o nome da empresa?");
+
+          //   Verificação de disponibilidade
+          if (
+            /^(segunda|terca|quarta|quinta|sexta)$/iu.test(dia_da_semana) &&
+            hora_evento >= 7 &&
+            hora_evento <= 23
+          ) {
+            auditório_disponível = true;
+          } else if (
+            /^(sabado|domingo)$/iu &&
+            hora_evento >= 7 &&
+            hora_evento <= 15
+          ) {
+            auditório_disponível = true;
+          }
+          dia_da_semana =
+            dia_da_semana.charAt(0).toUpperCase() + dia_da_semana.slice(1).toLowerCase(); // Deixa a primeira letra maiúscula
+          if (auditório_disponível) {
+            alert(
+              `Auditório reservado para ${nome_empresa}: ${dia_da_semana} às ${hora_evento}hs`
+            );
+            alert("Agora vamos ver os funcionários necessários...");
+            funcionarios_evento();
           } else {
-            alert("Hora inválida, informe um valor entre 0 e 23");
+            alert("Auditório indisponível");
           }
         }
 
-        //   Nome da empresa
-        nome_empresa = prompt("Qual o nome da empresa?");
-
-        //   Verificação de disponibilidade
-        if (
-          (dia_da_semana === "segunda" ||
-            dia_da_semana === "terca" ||
-            dia_da_semana === "quarta" ||
-            dia_da_semana === "quinta" ||
-            dia_da_semana === "sexta") &&
-          hora_evento >= 7 &&
-          hora_evento <= 23
-        ) {
-          auditório_disponível = true;
-        } else if (
-          (dia_da_semana === "sabado" || dia_da_semana === "domingo") &&
-          hora_evento >= 7 &&
-          hora_evento <= 15
-        ) {
-          auditório_disponível = true;
-        }
-
-        if (auditório_disponível) {
-          alert(
-            `Auditório reservado para ${nome_empresa}: ${dia_da_semana} às ${hora_evento}hs`
-          );
-          alert("Agora vamos ver os funcionários necessários...");
-          funcionarios_evento();
-        } else {
-          alert("Auditório indisponível");
-        }
-
         function funcionarios_evento() {
-          
+          let garcomSalarioHora = 10.5;
+
+          while (true) {
+            duracao_evento = parseInt(
+              prompt("Qual a duração do evento em horas?")
+            );
+            if (duracao_evento <= 0) {
+              alert("Duração do evento inválida");
+            } else {
+              break;
+            }
+          }
+          garcoms += Math.ceil(convidados / 12); // Arredonda para cima, como pedido
+          console.log(garcoms + " 1 math ceil");
+          garcoms += Math.ceil(duracao_evento / 2); // Adiciona um garçom a cada 2 horas
+          console.log(garcoms + " 2 math ceil");
+
+          custoTotalGarcoms = garcoms * garcomSalarioHora * duracao_evento;
+
+          alert(
+            `São necessários ${garcoms} garçons.\nCusto: R$${custoTotalGarcoms.toFixed(
+              2
+            )}`
+          );
+          alert(
+            "Agora vamos calcular o custo do buffet do hotel para o evento..."
+          );
+
+          buffet_evento();
         }
 
-        inicio();
+        function buffet_evento() {
+          //  Variáveis de controle
+          let cafe = convidados * 0.2;
+          let agua = convidados * 0.5;
+          let salgados = convidados * 7;
+
+          let custoCafe = cafe * 0.8;
+          let custoAgua = agua * 0.4;
+          let custoCentoSalgados = (salgados / 100) * 34;
+
+          alert(
+            `O evento precisará de ${cafe.toFixed(
+              2
+            )} litros de café, ${agua.toFixed(
+              2
+            )} litros de água, ${salgados} salgados.`
+          );
+
+          var custoTotalBuffet = custoCafe + custoAgua + custoCentoSalgados;
+
+          alert(
+            `
+            Evento no ${auditorio_usado}.\n
+            Nome da Empresa: ${nome_empresa}.\n
+            Data: ${dia_da_semana}, ${hora_evento}H às ${
+              hora_evento + duracao_evento
+            }H.\n
+            Duração do evento: ${duracao_evento}H.\n
+            Quantidade de garçons: ${garcoms}.\n
+            Quantidade de convidados: ${convidados}.\n\n
+            Custo dos garçons: R$${custoTotalGarcoms.toFixed(2)}\n
+            Custo do buffet: R$${custoTotalBuffet.toFixed(2)}\n\n
+            Valor total do evento: R$${(
+              custoTotalGarcoms + custoTotalBuffet
+            ).toFixed(2)}
+            `
+          );
+
+          let confirma = confirm("Gostaria de efetuar a reserva? S/N");
+          if (confirma) {
+            alert(`${nome_funcionario}, reserva efetuada com sucesso.`);
+            eventos.push({
+              Empresa: nome_empresa,
+              Dia: dia_da_semana,
+              Hora: hora_evento,
+              Duracao: duracao_evento,
+              Garcoms: garcoms,
+              Buffet: custoTotalBuffet,
+              Total: custoTotalGarcoms + custoTotalBuffet,
+            });
+            inicio()
+          } else {
+            alert("Reserva não efetuada.");
+          }
+        }
+        // TODO: Verificações e loops para garantir que os valores sejam válidos
+
       }
 
       //   Escolha abastecer carros
@@ -432,7 +535,7 @@
         }
       }
 
-      acesso();
+      setTimeout(acesso, 1000);
     </script>
   </head>
 
