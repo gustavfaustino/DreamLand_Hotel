@@ -35,9 +35,11 @@
         "20- livre",
       ];
 
-      eventos = [];
+      var eventos = [];
 
       var hospedes = [];
+
+      var orcamentos_ar = [];
 
       // Função de acesso
       function acesso() {
@@ -61,11 +63,12 @@
         var escolha = parseInt(
           prompt(
             `Selecione uma opção
-                             1.) Reserva de Quartos
-                             2.) Cadastro de Hóspedes
-                             3.) Abastecimento de Carros
-                             4.) Cadastrar Eventos
-                             5.) Sair`
+                                   1.) Reserva de Quartos
+                                   2.) Cadastro de Hóspedes
+                                   3.) Abastecimento de Carros
+                                   4.) Cadastrar Eventos
+                                   5.) Conserto Ar-Condicionado
+                                   6.) Sair`
           )
         );
 
@@ -83,6 +86,9 @@
             evento();
             break;
           case 5:
+            ar_condicionado();
+            break;
+          case 6:
             sair();
             break;
           default:
@@ -154,7 +160,7 @@
 
         let Confirma = confirm(
           `${nome_funcionario}, você confirma a hospedagem para ${NomeHospede} por ${quantidade_dia} dias
-                                                   para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
+                                                         para o quarto ${numero_quarto} por R$${ValorPagar.toFixed(
             2
           )}?`
         );
@@ -260,10 +266,10 @@
 
         alert(
           `${nome_funcionario}, a quantidade de gratuidades: ${gratuidade}\n
-                                           Quantidade de meias hospedagens: ${meia}\n
-                                           Valor total: R$${valor_total.toFixed(
-                                             2
-                                           )}`
+                                                 Quantidade de meias hospedagens: ${meia}\n
+                                                 Valor total: R$${valor_total.toFixed(
+                                                   2
+                                                 )}`
         );
         opcoes_cadastro();
       }
@@ -292,9 +298,11 @@
         hospedes.forEach((hospede) => {
           alert(
             `Nome: ${hospede.Hospede}\n
-                                         Idade: ${hospede.Idade}\n
-                                         Tipo: ${hospede.Tipo}\n
-                                         Valor: R$${hospede.Valor.toFixed(2)}`
+                                               Idade: ${hospede.Idade}\n
+                                               Tipo: ${hospede.Tipo}\n
+                                               Valor: R$${hospede.Valor.toFixed(
+                                                 2
+                                               )}`
           );
         });
 
@@ -412,7 +420,8 @@
             auditório_disponível = true;
           }
           dia_da_semana =
-            dia_da_semana.charAt(0).toUpperCase() + dia_da_semana.slice(1).toLowerCase(); // Deixa a primeira letra maiúscula
+            dia_da_semana.charAt(0).toUpperCase() +
+            dia_da_semana.slice(1).toLowerCase(); // Deixa a primeira letra maiúscula
           if (auditório_disponível) {
             alert(
               `Auditório reservado para ${nome_empresa}: ${dia_da_semana} às ${hora_evento}hs`
@@ -478,20 +487,20 @@
 
           alert(
             `
-            Evento no ${auditorio_usado}.\n
-            Nome da Empresa: ${nome_empresa}.\n
-            Data: ${dia_da_semana}, ${hora_evento}H às ${
+                  Evento no ${auditorio_usado}.\n
+                  Nome da Empresa: ${nome_empresa}.\n
+                  Data: ${dia_da_semana}, ${hora_evento}H às ${
               hora_evento + duracao_evento
             }H.\n
-            Duração do evento: ${duracao_evento}H.\n
-            Quantidade de garçons: ${garcoms}.\n
-            Quantidade de convidados: ${convidados}.\n\n
-            Custo dos garçons: R$${custoTotalGarcoms.toFixed(2)}\n
-            Custo do buffet: R$${custoTotalBuffet.toFixed(2)}\n\n
-            Valor total do evento: R$${(
-              custoTotalGarcoms + custoTotalBuffet
-            ).toFixed(2)}
-            `
+                  Duração do evento: ${duracao_evento}H.\n
+                  Quantidade de garçons: ${garcoms}.\n
+                  Quantidade de convidados: ${convidados}.\n\n
+                  Custo dos garçons: R$${custoTotalGarcoms.toFixed(2)}\n
+                  Custo do buffet: R$${custoTotalBuffet.toFixed(2)}\n\n
+                  Valor total do evento: R$${(
+                    custoTotalGarcoms + custoTotalBuffet
+                  ).toFixed(2)}
+                  `
           );
 
           let confirma = confirm("Gostaria de efetuar a reserva? S/N");
@@ -506,19 +515,160 @@
               Buffet: custoTotalBuffet,
               Total: custoTotalGarcoms + custoTotalBuffet,
             });
-            inicio()
+            inicio();
           } else {
             alert("Reserva não efetuada.");
           }
         }
         // TODO: Verificações e loops para garantir que os valores sejam válidos
-
       }
 
       //   Escolha abastecer carros
       function abastecer_carros() {
         alert(`HOTEL ${NOME_HOTEL} - ABASTECER`);
+        // Preços dos postos
+        // Wayne Oil
+        var wayne_oil_alcool = parseFloat(
+          prompt("Qual o valor do álcool no posto Wayne Oil?")
+        );
+        var wayne_oil_gasolina = parseFloat(
+          prompt("Qual o valor da gasolina no posto Wayne Oil?")
+        );
+
+        // Stark Petrol
+        var stark_petrol_alcool = parseFloat(
+          prompt("Qual o valor do álcool no posto Stark Petrol?")
+        );
+        var stark_petrol_gasolina = parseFloat(
+          prompt("Qual o valor da gasolina no posto Stark Petrol?")
+        );
+
+        // Cálculo de qual combustível é mais barato
+        function mais_barato(alcool, gasolina) {
+          if (alcool < gasolina * 0.7) {
+            // 30% mais barato, ou seja, 70% do valor da gasolina
+            return "álcool";
+          } else {
+            return "gasolina";
+          }
+        }
+
+        // Cálculo de qual posto é mais barato
+        var posto_wayne = mais_barato(wayne_oil_alcool, wayne_oil_gasolina);
+        var posto_stark = mais_barato(
+          stark_petrol_alcool,
+          stark_petrol_gasolina
+        );
+
+        // Calculo de custos para abestecer 42 litros utilizando operadorioes ternários ( ? | : )
+        var custo_wayne =
+          posto_wayne === "álcool"
+            ? wayne_oil_alcool * 42
+            : wayne_oil_gasolina * 42;
+        var custo_stark =
+          posto_stark === "álcool"
+            ? stark_oil_alcool * 42
+            : stark_oil_gasolina * 42;
+
+        if (custo_wayne < custo_stark) {
+          alert(
+            `É mais barato abastecer com ${posto_wayne} no posto Wayne Oil`
+          );
+        } else if (custo_stark < custo_wayne) {
+          alert(
+            `É mais barato abastecer com ${posto_stark} no posto Stark Petrol`
+          );
+        } else if (custo_stark === custo_wayne) {
+          alert(`Os custos são os mesmos em ambos os postos!`);
+        } else {
+          alert(`Digite valores válidos!`);
+        }
         inicio();
+      }
+
+      function ar_condicionado() {
+        alert(`HOTEL ${NOME_HOTEL} - AR-CONDICIONADO`);
+        let loop = true;
+        while (loop) {
+          var nome_empresa_ar_condicionado = prompt("Qual o nome da empresa?");
+
+          var valor_aparelho = parseFloat(
+            prompt("Qual o valor do serviço por aparelho?")
+          );
+
+          var quantidade_aparelho = parseInt(
+            prompt(
+              "Qual a quantidade de ar-condicionados com má funcionamento?"
+            )
+          );
+
+          var quantidade_ate_desconto = parseInt(
+            prompt(
+              "Qual a quantidade de produtos para ter um desconto? (Digite 0 se não há desconto)"
+            )
+          );
+
+          if (quantidade_ate_desconto > 0) {
+            var desconto_aparelho = parseFloat(
+              prompt(
+                `Qual valor do desconto para conserto? 
+            (Obs.: Descontos apenas acima de ${quantidade_ate_desconto} aparelhos)`
+              )
+            );
+          }
+
+          // Calculo do valor total sem descontos
+          let valor_total = valor_aparelho * quantidade_aparelho;
+
+          // Verifica se a quantidade é suficiente pro desconto
+          if (
+            quantidade_aparelho >= quantidade_ate_desconto &&
+            desconto_aparelho > 0
+          ) {
+            let desconto = valor_total * (desconto_aparelho / 100);
+            valor_total -= desconto;
+          }
+
+          alert(
+            `O serviço de ${nome_empresa_ar_condicionado} custará R$ ${valor_total.toFixed(
+              2
+            )}`
+          );
+          orcamentos_ar.push({
+            Empresa: nome_empresa_ar_condicionado,
+            Valor: valor_total,
+          });
+          // Pergunta se o usuário quer informar mais empresas e ajusta a lógica do loop
+          let continuar = confirm("Deseja informar novos dados?");
+          loop = continuar; // O loop continua se o usuário confirmar
+        }
+        // Agora, vamos encontrar o orçamento de menor valor
+        var menor_orcamento = orcamentos_ar.reduce((min, atual) =>
+          atual.valor < min.valor ? atual : min
+        );
+
+        // Exibe o orçamento de menor valor
+        if (orcamentos_ar.length > 0) {
+          // Verifica se há orçamentos para comparar
+          var menor_orcamento = orcamentos_ar.reduce((min, atual) =>
+            atual.Valor < min.Valor ? atual : min
+          );
+
+          // Exibe o orçamento de menor valor
+          alert(
+            `O orçamento de menor valor é o de ${
+              menor_orcamento.Empresa
+            } por R$ ${menor_orcamento.Valor.toFixed(2)}`
+          );
+        } else {
+          alert("Nenhum orçamento foi informado.");
+        }
+
+        inicio(); // Chama a função inicio novamente para reiniciar o programa principal
+
+        // Nota: no exercício original a conta está errada.
+        // 100*7= 700*(700*0.12)= 616 != 1350
+        // Mesma coisa na empresa 2...
       }
 
       //   Erro
